@@ -3,7 +3,7 @@ import hmac
 import hashlib
 import json
 from typing import Optional
-from fastapi import FastAPI, Form, Cookie
+from fastapi import FastAPI, Form, Cookie, Body
 from fastapi.responses import Response
 from data import SECRET_KEY, PASSWORD_SALT
 # SECRET_KEY, PASSWORD_SALT Хранится в модуле data и создается с помощью <openssl rand -hex 32>
@@ -34,8 +34,6 @@ def verify_password(username: str, password: str) -> bool:
     """Проверяет хеш полученного пороля с хешем из базы данных"""
     password_hash = hashlib.sha256((password + PASSWORD_SALT).encode()).hexdigest().lower()
     stored_password_hash = users[username]["password"].lower()
-    print("хеш пароля в бд", stored_password_hash)
-    print("то что получилось в вункции password_hash", password_hash)
     return  stored_password_hash == password_hash.lower()
 
 
@@ -83,13 +81,13 @@ def login_process(username: str = Form(...), password: str = Form(...)):
                 "success": False,
                 "message": "Я вас не знаю"
             }), 
-            media_type="aplication/json")
+            media_type="application/json")
     response =  Response(
         json.dumps({
             "success": True, 
             "message": f"Привет! {users[username]['name']}<br />Баланс: {user['balance']}"
         }),
-        media_type="aplication/json")
+        media_type="application/json")
     signed_username = base64.b64encode(username.encode()).decode() + "." + \
         sign_data(username)
     response.set_cookie(key="username", value=signed_username)
