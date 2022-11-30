@@ -72,8 +72,9 @@ def index_page(username: Optional[str] = Cookie(default=None)):
 
 
 @app.post("/login")
-# используя fastapi достаем данные из полей формы. Функция Form передаст их как атрибуты для login_process
-def login_process(username: str = Form(...), password: str = Form(...)):
+def login_process(data: dict = Body(...)):
+    username = data["username"]
+    password = data["password"]
     user = users.get(username)
     if not user or not verify_password(username, password):
         return Response(

@@ -39,11 +39,12 @@
             let btn = document.querySelector("input[type=submit]");
             btn.addEventListener('click', async function(event){
                 event.preventDefault();
-                // let username = document.querySelector('input[name=username]').value;
-                // let password = document.querySelector('input[name=password]').value;
-                let response = await fetch('/login', {
-                    method: 'POST',
-                    body: new FormData(document.querySelector('form'))
+                let username = document.querySelector('input[name=username]').value;
+                let password = document.querySelector('input[name=password]').value;
+                let response = await fetch("/login", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: `{"username": "${username}", "password": "${password}"}`
                 });
                 let response_json = await response.json();
                 if (response_json.success){
